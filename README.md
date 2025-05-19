@@ -19,6 +19,193 @@ The list fo prompts and follow up question I asked is available in [Q-CLI-dialog
 ## Implementation
 This project is built using SwiftUI and follows the MVVM architecture pattern.
 
+## Class Diagram
+```mermaid
+classDiagram
+    class PacmanApp {
+        +body: Scene
+    }
+    
+    class GameState {
+        +score: Int
+        +lives: Int
+        +gameActive: Bool
+        +gameOver: Bool
+        +level: Int
+        +soundEnabled: Bool
+        +backgroundPlayer: AVAudioPlayer?
+        +chompPlayer: AVAudioPlayer?
+        +deathPlayer: AVAudioPlayer?
+        +ghostEatenPlayer: AVAudioPlayer?
+        +setupAudio()
+        +playSound(GameSound)
+        +startGame()
+        +loseLife()
+        +addScore(Int)
+        +eatDot()
+        +eatPowerPellet()
+        +eatGhost()
+        +advanceLevel()
+    }
+    
+    class GameEngine {
+        +maze: [[CellType]]
+        +pacmanPosition: Position
+        +pacmanDirection: Direction
+        +requestedDirection: Direction
+        +dots: [Position]
+        +powerPellets: [Position]
+        +ghosts: [Ghost]
+        +ghostsVulnerable: Bool
+        -gameTimer: Timer?
+        -vulnerabilityTimer: Timer?
+        -gameSpeed: TimeInterval
+        +setupGame()
+        +startGame()
+        +stopGame()
+        +update()
+        +movePacman()
+        +moveGhosts()
+        +checkCollisions()
+        +changeDirection(Direction)
+        +makeGhostsVulnerable()
+        +endGhostVulnerability()
+        +isValidMove(Position, isGhost: Bool): Bool
+    }
+    
+    class ContentView {
+        +body: View
+    }
+    
+    class GameView {
+        +body: View
+    }
+    
+    class MazeView {
+        +body: View
+    }
+    
+    class ControlsView {
+        +body: View
+    }
+    
+    class PacmanView {
+        +direction: Direction
+        +mouthAngle: Double
+        +body: View
+    }
+    
+    class AnimatedPacmanView {
+        +direction: Direction
+        -mouthAngle: Double
+        -mouthOpening: Bool
+        +body: View
+    }
+    
+    class GhostView {
+        +ghostType: CharacterType
+        +state: GhostState
+        +body: View
+    }
+    
+    class DotView {
+        +body: View
+    }
+    
+    class PowerPelletView {
+        -isAnimating: Bool
+        +body: View
+    }
+    
+    class PacmanMouth {
+        +direction: Direction
+        +mouthAngle: Double
+        +path(in: CGRect): Path
+    }
+    
+    class Ghost {
+        +id: UUID
+        +type: CharacterType
+        +position: Position
+        +targetPosition: Position
+        +direction: Direction
+        +state: GhostState
+        +homePosition: Position
+        +calculateTarget(pacmanPosition: Position, pacmanDirection: Direction): Position
+    }
+    
+    class Position {
+        +x: Int
+        +y: Int
+        +moved(direction: Direction): Position
+    }
+    
+    class Direction {
+        <<enumeration>>
+        UP
+        DOWN
+        LEFT
+        RIGHT
+        +vector: CGPoint
+    }
+    
+    class CellType {
+        <<enumeration>>
+        WALL
+        EMPTY
+        DOT
+        POWER_PELLET
+        GHOST_HOUSE
+        TUNNEL
+    }
+    
+    class CharacterType {
+        <<enumeration>>
+        PACMAN
+        BLINKY
+        PINKY
+        INKY
+        CLYDE
+    }
+    
+    class GhostState {
+        <<enumeration>>
+        CHASE
+        SCATTER
+        FRIGHTENED
+        EATEN
+    }
+    
+    class GameSound {
+        <<enumeration>>
+        BACKGROUND
+        CHOMP
+        DEATH
+        GHOST_EATEN
+        POWER_PELLET
+    }
+    
+    PacmanApp *-- GameState
+    ContentView o-- GameView
+    GameView *-- GameEngine
+    GameView o-- ControlsView
+    GameView o-- MazeView
+    GameEngine o-- GameState
+    GameEngine *-- "many" Ghost
+    MazeView o-- AnimatedPacmanView
+    MazeView o-- GhostView
+    MazeView o-- DotView
+    MazeView o-- PowerPelletView
+    AnimatedPacmanView *-- PacmanView
+    PacmanView *-- PacmanMouth
+    Ghost -- CharacterType
+    Ghost -- GhostState
+    Ghost -- Position
+    GameEngine -- Direction
+    GameEngine -- CellType
+    GameState -- GameSound
+```
+
 ## Files
 - `PacmanApp.swift` - Main app entry point
 - `ContentView.swift` - Main menu and game container
