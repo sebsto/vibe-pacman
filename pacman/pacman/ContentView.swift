@@ -175,3 +175,10 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(GameState())
     }
 }
+
+struct GameView_Previews: PreviewProvider {
+    static var previews: some View {
+        GameView()
+            .environmentObject(GameState())
+    }
+}
